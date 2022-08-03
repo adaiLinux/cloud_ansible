@@ -1,0 +1,35 @@
+#!/bin/sh
+
+version={{ ver }}
+tarball=telegraf-${version}_linux_amd64.tar.gz
+
+tar xzvf $tarball
+
+mkdir -p {{ install_dir }}
+cp -far telegraf-${version}/usr/bin/telegraf {{ install_dir }}
+
+cat <<EOF > {{ service_file }}
+[Unit]
+Description="telegraf"
+After=network.target
+
+[Service]
+Type=simple
+
+WorkingDirectory={{ install_dir }}
+ExecStart={{ install_dir }}/telegraf --config telegraf.conf --config-directory {{ install_dir }}/telegraf.d
+
+SuccessExitStatus=0
+LimitNOFILE=65536
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=telegraf
+KillMode=process
+KillSignal=SIGQUIT
+TimeoutStopSec=5
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+

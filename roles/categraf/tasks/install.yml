@@ -1,0 +1,42 @@
+---
+- name: "Upload {{ package_name }}.tar.gz"
+  copy:
+    src: "{{ package_name }}.tar.gz"
+    dest: "{{ temp_dir }}"
+
+- name: "Unarchive {{ package_name }}.tar.gz"
+  unarchive:
+    src: "{{ temp_dir }}/{{ package_name }}.tar.gz"
+    dest: "{{ install_dir }}"
+    remote_src: yes
+
+- name: "Move to {{ work_dir }}"
+  shell: "mv {{ install_dir }}/{{ package_name }}  {{ install_dir }}/categraf"
+
+- name: Ensure dir exists
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  with_items:
+    - "{{ log_dir }}"
+    - "{{ scripts_dir }}"
+
+- name: Generate config
+  template:
+    src: config.toml.j2
+    dest: "{{ config_dir }}/config.toml"
+    mode: 0644
+
+- name: Generate categraf.logrotate
+  template:
+    src: categraf.logrotate.j2
+    dest: "{{ logrotate_dir }}/categraf.logrotate"
+    mode: 0644
+
+- name: include a play
+  include: update.yml
+
+- name: include a play
+  include: start.yml

@@ -1,0 +1,5 @@
+---
+- name: stop service
+  systemd:
+    name: telegraf
+    state: stopped

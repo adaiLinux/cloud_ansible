@@ -1,0 +1,24 @@
+---
+# 安装：ansible-playbook -l groupname telegraf.yml --tags "common"
+- hosts: all
+  gather_facts: true
+  tags: ["common"]
+  roles:
+    - { role: telegraf, action: 'install' }
+
+# control专用：ansible-playbook -l control telegraf.yml --tags "op"
+# 更新：中间件监控采集尽量在 control 统一管理（拨测）
+- hosts: control
+  gather_facts: true
+  tags: ["op"]
+  roles:
+    - { role: telegraf, action: 'update', env: 'op' }
+
+# 拨测机器专用：ansible-playbook -l broadcast01 telegraf.yml --tags "broadcast"
+# 更新：中间件监控采集尽量在 control 统一管理（拨测）
+- hosts: broadcast01
+  gather_facts: true
+  tags: ["broadcast"]
+  roles:
+    - { role: telegraf, action: 'update', env: 'op' }
+

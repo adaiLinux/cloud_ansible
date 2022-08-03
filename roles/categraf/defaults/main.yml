@@ -1,0 +1,16 @@
+---
+action: 'install'
+user: 'root'
+group: 'root'
+ver: 'v0.2.5'
+install_dir: '/opt'
+temp_dir: '/usr/local/src'
+work_dir: '{{ install_dir }}/categraf'
+config_dir: "{{ work_dir }}/conf"
+log_dir: '/var/log/categraf'
+etc_init_dir: '/etc/init.d'
+logrotate_dir: '/etc/logrotate.d'
+scripts_dir: "{{ work_dir }}/scripts"
+server_ip: 'Your n9e server ip'
+package_name: "categraf-{{ ver }}-linux-amd64"
+service_file: '/etc/systemd/system/categraf.service'

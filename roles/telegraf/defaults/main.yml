@@ -1,0 +1,14 @@
+---
+action: 'install'
+user: root
+group: root
+ver: '1.23.3'
+temp_dir: '/usr/local/src'
+install_dir: '/opt/telegraf'
+log_dir: '/var/log/telegraf'
+etc_init_dir: '/etc/init.d'
+logrotate_dir: '/etc/logrotate.d'
+scripts_dir: "{{ install_dir }}/scripts"
+server_ip: 'Your n9e server ip'
+package_name: "telegraf-{{ ver }}_linux_amd64.tar.gz"
+service_file: '/etc/systemd/system/telegraf.service'

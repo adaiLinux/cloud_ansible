@@ -1,0 +1,20 @@
+[Unit]
+Description="Categraf"
+After=network.target
+
+[Service]
+Type=simple
+
+ExecStart={{ work_dir }}/categraf
+WorkingDirectory={{ work_dir }}
+
+Restart=on-failure
+SuccessExitStatus=0
+LimitNOFILE=65536
+# StandardOutput={{ log_dir }}/categraf.log
+# StandardError={{ log_dir }}/categraf.log
+SyslogIdentifier=categraf
+
+
+[Install]
+WantedBy=multi-user.target

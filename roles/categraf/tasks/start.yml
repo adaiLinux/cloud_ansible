@@ -1,0 +1,9 @@
+---
+- name: Start service centos7
+  systemd:
+    name: categraf
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+

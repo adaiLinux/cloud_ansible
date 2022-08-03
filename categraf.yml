@@ -1,0 +1,15 @@
+---
+# 安装：ansible-playbook -l groupname categraf.yml --tags "common"
+- hosts: all
+  gather_facts: true
+  tags: ["common"]
+  roles:
+    - { role: categraf, action: 'install' }
+
+# 更新：ansible-playbook -l control categraf.yml --tags "op"
+# 中间件监控采集尽量在 control 统一管理（拨测）
+- hosts: control
+  gather_facts: true
+  tags: ["op"]
+  roles:
+    - { role: categraf, action: 'update', env: 'op' }

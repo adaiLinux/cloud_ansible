@@ -1,0 +1,30 @@
+# Reads 'mntr' stats from one or many zookeeper servers
+[[inputs.zookeeper]]
+  interval = "60s"
+  drop_original = true
+  fielddrop = ["*_version", "*_peer_state", "*_server_state", "*_namespace", "*_time_ms", "*_time", "*_propagation_latency", "*_ack_latency", "*_size", "*_commit_processor", "*_watch_count", "*_issued", "*_capacity", "*_diff_count", "*_queued", "*_proposal_latency", "*_cleaner_latency"]
+  ## An array of address to gather stats about. Specify an ip or hostname
+  ## with port. ie localhost:2181, 10.0.0.1:2181, etc.
+
+  ## If no servers are specified, then localhost is used as the host.
+  ## If no port is specified, 2181 is used
+  servers = ["10.100.39.10:2181", "10.100.39.11:2181", "10.100.39.12:2181"]
+
+  ## Timeout for metric collections from all servers.  Minimum timeout is "1s".
+  timeout = "5s"
+
+
+############################### zk 指标说明 #####################################
+# zk_avg_latency    响应一个客户端请求的时间，建议这个时间大于10个Tick就报警
+# zk_min_latency    响应一个客户端请求的时间，建议这个时间大于10个Tick就报警
+# zk_max_latency    响应一个客户端请求的时间，建议这个时间大于10个Tick就报警
+# zk_outstanding_requests        排队请求的数量，当ZooKeeper超过了它的处理能力时，这个值会增大，建议设置报警阀值为10
+# zk_packets_received      接收到客户端请求的包数量
+# zk_packets_sent        发送给客户单的包数量，主要是响应和通知
+# zk_max_file_descriptor_count   最大允许打开的文件数，由ulimit控制
+# zk_open_file_descriptor_count    打开文件数量，当这个值大于允许值得85%时报警
+# zk_followers          leader角色才会有这个输出,集合中follower的个数。正常的值应该是集合成员的数量减1
+# zk_pending_syncs       leader角色才会有这个输出，pending syncs的数量
+# zk_znode_count         znodes的数量
+# zk_watch_count         watches的数量
+# zk_num_alive_connections  存活连接数

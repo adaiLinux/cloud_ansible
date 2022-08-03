@@ -1,0 +1,53 @@
+[global_tags]
+
+[agent]
+  interval = "10s"
+  round_interval = true
+  metric_batch_size = 1000
+  metric_buffer_limit = 10000
+  collection_jitter = "0s"
+  flush_interval = "10s"
+  flush_jitter = "0s"
+  precision = ""
+  logfile = "{{ log_dir }}/telegraf.log"
+  hostname = "{{ hostvars[inventory_hostname].ansible_ssh_host }}"
+  omit_hostname = false
+
+[[outputs.opentsdb]]
+  host = "http://{{ server_ip }}"
+  port = 19000
+  http_batch_size = 50
+  http_path = "/opentsdb/put"
+  debug = false
+  separator = "_"
+
+[[inputs.cpu]]
+  percpu = true
+  totalcpu = true
+  collect_cpu_time = false
+  report_active = true
+
+[[inputs.disk]]
+  interval = "30s"
+  ignore_fs = ["tmpfs", "devtmpfs", "devfs", "iso9660", "overlay", "aufs", "squashfs", "nfs", "nfs4", "fuse.mfs", "cifs"]
+  [inputs.disk.tagdrop]
+    path = ["/var/lib/kubelet*"]
+
+
+
+[[inputs.diskio]]
+
+[[inputs.kernel]]
+
+[[inputs.mem]]
+
+[[inputs.processes]]
+
+[[inputs.system]]
+  fielddrop = ["uptime_format"]
+
+[[inputs.net]]
+  ignore_protocol_stats = true
+
+[[inputs.netstat]]
+

@@ -1,0 +1,2 @@
+control             ansible_ssh_host=10.111.111.110 feature='broadcast'
+broadcast01         ansible_ssh_host=10.111.111.111 feature='broadcast'

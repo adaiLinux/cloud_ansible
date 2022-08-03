@@ -1,0 +1,80 @@
+- name: Update main categraf config
+  template:
+    src: "config.toml.j2"
+    dest: "{{ config_dir }}/config.toml"
+    mode: 0644
+  register: categraf_conf_stat
+
+- name: Ensure categraf common inputs dirs exist
+  file:
+    path: "{{ config_dir }}/input.{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  with_items:
+    - "cpu"
+    - "mem"
+    - "disk"
+    - "net"
+    - "diskio"
+    - "conntrack"
+    - "processes"
+    - "procstat"
+
+- name: Update categraf common inputs conf
+  template:
+    src: "inputs.d/input.{{ item }}/{{ item }}.toml"
+    dest: "{{ config_dir }}/input.{{ item }}/{{ item }}.toml"
+    mode: 0644
+  with_items:
+    - "cpu"
+    - "mem"
+    - "net"
+    - "disk"
+    - "diskio"
+    - "conntrack"
+    - "processes"
+    - "procstat"
+  register: categraf_common_inputs_stat
+
+- name: Ensure categraf children inputs dirs exist
+  file:
+    path: "{{ config_dir }}/input.{{ item }}"
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ group }}"
+  with_items:
+    - "elasticsearch"
+    - "zookeeper"
+  when: env == "op"
+  
+- name: Update categraf inputs conf
+  template:
+    src: "inputs.d/input.{{ item }}/{{ item }}.toml"
+    dest: "{{ config_dir }}/input.{{ item }}/{{ item }}.toml"
+    mode: 0644
+  with_items:
+    - "elasticsearch"
+    - "zookeeper"
+  when: env == "op"
+  register: categraf_custom_inputs_stat
+
+- name: Generate categraf.logrotate
+  template:
+    src: categraf.logrotate.j2
+    dest: "{{ logrotate_dir }}/categraf.logrotate"
+    mode: 0644
+
+- name: Generate categraf service
+  template:
+    src: categraf.service.j2
+    dest: "{{ service_file }}"
+    mode: 0644
+  register: service_file_stat
+
+- name: systemctl daemon-reload && restart
+  systemd:
+    name: categraf
+    state: restarted
+    daemon_reload: true
+  when: service_file_stat.changed or categraf_conf_stat.changed or categraf_common_inputs_stat.changed or categraf_custom_inputs_stat.changed and ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"

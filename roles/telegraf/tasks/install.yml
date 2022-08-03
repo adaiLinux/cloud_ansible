@@ -1,0 +1,57 @@
+---
+- name: Ensure dir exists
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ install_dir }}"
+    - "{{ log_dir }}"
+    - "{{ install_dir }}/telegraf.d"
+    - "{{ install_dir }}/scripts"
+
+- name: Copy package
+  copy:
+    src: "{{ package_name }}"
+    dest: "{{ temp_dir }}"
+
+- name: Upload install script
+  template:
+    src: telegraf-install.sh.j2
+    dest: "{{ temp_dir }}/telegraf-install.sh"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Install telegraf on Centos7
+  shell:
+    cmd: 'sh telegraf-install.sh'
+    chdir: "{{ temp_dir }}"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Unarchive telegraf on Centos6
+  unarchive:
+    src: "{{ temp_dir }}/{{ package_name }}"
+    dest: "{{ temp_dir }}"
+    remote_src: yes
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+
+- name: Install telegraf on Centos6
+  shell: "cp -far {{ temp_dir }}/telegraf-{{ ver }}/usr/bin/telegraf {{ install_dir }}"
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+
+- name: Generate telegraf.sh
+  template:
+    src: telegraf.sh.j2
+    dest: "{{ etc_init_dir }}/telegraf"
+    mode: 0755
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+
+- name: Generate telegraf.logrotate
+  template:
+    src: telegraf.logrotate.j2
+    dest: "{{ logrotate_dir }}/telegraf.logrotate"
+    mode: 0644
+
+- name: include a play
+  include: update.yml
+
+- name: include a play
+  include: start.yml

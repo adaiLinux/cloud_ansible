@@ -1,0 +1,16 @@
+# Read Nginx virtual host traffic status module information (nginx-module-vts)
+# test
+[[inputs.nginx_vts]]
+  interval = "30s"
+  ## An array of ngx_http_status_module or status URI to gather stats.
+  urls = ["http://10.100.38.201/ngx_vts_status"]
+
+  ## HTTP response timeout (default: 5s)
+  response_timeout = "5s"
+
+  ## Optional TLS Config
+  # tls_ca = "/etc/telegraf/ca.pem"
+  # tls_cert = "/etc/telegraf/cert.pem"
+  # tls_key = "/etc/telegraf/key.pem"
+  ## Use TLS but skip chain & host verification
+  # insecure_skip_verify = false

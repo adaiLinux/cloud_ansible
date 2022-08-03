@@ -1,0 +1,36 @@
+[logs]
+## just a placholder
+api_key = "ef4ahfbwzwwtlwfpbertgq1i6mq0ab1q"
+## enable log collect or not
+enable = false
+## the server receive logs, http/tcp/kafka, only kafka brokers can be multiple ip:ports with concatenation character ","
+send_to = "127.0.0.1:17878"
+## send logs with protocol: http/tcp/kafka
+send_type = "http"
+topic = "flashcatcloud"
+## send logs with compression or not 
+use_compress = false
+## use ssl or not
+send_with_tls = false
+## send logs in batchs
+batch_wait = 5
+## save offset in this path 
+run_path = "/opt/categraf/run"
+## max files can be open 
+open_files_limit = 100
+## scan config file in 10 seconds
+scan_period = 10
+## read buffer of udp 
+frame_size = 9000
+##
+collect_container_all = true
+  ## glog processing rules
+  [[logs.Processing_rules]]
+  ## single log configure
+  [[logs.items]]
+  ## file/journald/tcp/udp
+  type = "file"
+  ## type=file, path is required; type=journald/tcp/udp, port is required
+  path = "/opt/tomcat/logs/*.txt"
+  source = "tomcat"
+  service = "my_service"

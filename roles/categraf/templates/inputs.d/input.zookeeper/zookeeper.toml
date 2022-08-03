@@ -1,0 +1,19 @@
+# # collect interval
+interval = 60
+
+[[instances]]
+cluster_name = "zzfund-prod-zk"
+addresses = "10.100.39.10:2181 10.100.39.11:2181 10.100.39.12:2181"
+timeout = 5
+
+# important! use global unique string to specify instance
+labels = { cluster="zzfund-prod-zk" }
+
+## Optional TLS Config
+# use_tls = false
+# tls_min_version = "1.2"
+# tls_ca = "/etc/categraf/ca.pem"
+# tls_cert = "/etc/categraf/cert.pem"
+# tls_key = "/etc/categraf/key.pem"
+## Use TLS but skip chain & host verification
+# insecure_skip_verify = true

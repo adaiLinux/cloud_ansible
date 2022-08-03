@@ -1,0 +1,11 @@
+---
+- name: include a paly
+  include: stop.yml
+
+- name: Remove files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ service_file }}"
+    - "{{ install_dir }}"

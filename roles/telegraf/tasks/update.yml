@@ -1,0 +1,44 @@
+---
+- name: Update main telegraf config
+  template:
+    src: "{{ env }}-telegraf.conf.j2"
+    dest: "{{ install_dir }}/telegraf.conf"
+    mode: 0644
+  register: telegraf_conf_stat
+
+- name: Update children telegraf conf
+  template:
+    src: "telegraf.d/{{ item }}.conf.j2"
+    dest: "{{ install_dir }}/telegraf.d/{{ item }}.conf"
+    mode: 0644
+  with_items:
+    - "nginx"
+    - "nginx_vts"
+    - "nginx_upstream_check"
+  when: env == "op"
+  register: telegraf_child_conf_stat
+
+- name: Generate telegraf.logrotate
+  template:
+    src: telegraf.logrotate.j2
+    dest: "{{ logrotate_dir }}/telegraf.logrotate"
+    mode: 0644
+
+- stat:
+    path: "{{ service_file }}"
+  register: service_file_stat
+
+- name: systemctl daemon-reload && restart
+  systemd:
+    name: telegraf
+    state: restarted
+    daemon_reload: true
+  when: service_file_stat.changed or telegraf_conf_stat.changed or telegraf_child_conf_stat.changed and ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Restart telegraf on Centos6
+  service:
+    name: telegraf
+    state: restarted
+  when: service_file_stat.changed or telegraf_conf_stat.changed or telegraf_child_conf_stat.changed and ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+
+

@@ -1,0 +1,14 @@
+---
+- name: Start service centos7
+  systemd:
+    name: telegraf
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+- name: Start service centos6
+  service:
+    name: telegraf
+    state: started
+    enabled: yes
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"

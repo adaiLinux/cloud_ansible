@@ -1,0 +1,9 @@
+*.pyc
+*.log
+*.retry
+.idea
+*.swp
+tmp
+tmp*
+data
+commit.sh
