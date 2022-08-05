@@ -1,0 +1,462 @@
+{
+    "name": "Nginx - 关键指标监控",
+    "tags": "nginx",
+    "configs": {
+        "var": [
+            {
+                "definition": "label_values(nginx_active,server)",
+                "name": "server",
+                "multi": true,
+                "allOption": true
+            }
+        ],
+        "panels": [
+            {
+                "type": "row",
+                "id": "aa9f0799-cc86-4bee-82cc-57dfd3ad0f9e",
+                "name": "Server",
+                "collapsed": true,
+                "layout": {
+                    "h": 1,
+                    "w": 24,
+                    "x": 0,
+                    "y": 0,
+                    "i": "aa9f0799-cc86-4bee-82cc-57dfd3ad0f9e",
+                    "isResizable": false
+                },
+                "panels": []
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "sum(nginx_vts_server_response_2xx_count{source=~\"$server\"} or nginx_vts_server_response_3xx_count{source=~\"$server\"})",
+                        "legend": "response_2/3xx："
+                    },
+                    {
+                        "expr": "sum(nginx_vts_server_response_4xx_count{source=~\"$server\"})",
+                        "refId": "B",
+                        "legend": "response_4xx："
+                    },
+                    {
+                        "expr": "sum(nginx_vts_server_response_5xx_count{source=~\"$server\"})",
+                        "refId": "C",
+                        "legend": "response_5xx："
+                    }
+                ],
+                "name": "Response status",
+                "custom": {
+                    "calc": "lastNotNull",
+                    "legengPosition": "bottom",
+                    "labelWithName": true
+                },
+                "version": "2.0.0",
+                "type": "pie",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 1,
+                    "i": "f0ef4a60-76f4-4eb0-bbc9-51000f3fa481",
+                    "isResizable": true
+                },
+                "id": "a2edf50d-f5e2-42b5-a79d-3df5cfe9b111"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "sum(nginx_vts_server_in_bytes{source=~\"$server\"})",
+                        "legend": "Network In "
+                    },
+                    {
+                        "expr": "sum(nginx_vts_server_out_bytes{source=~\"$server\"})",
+                        "refId": "B",
+                        "legend": "Network Out"
+                    }
+                ],
+                "name": "Network in/out (bytes)",
+                "custom": {
+                    "calc": "lastNotNull",
+                    "colorRange": [
+                        "#83c898",
+                        "#c2c2c2",
+                        "#fc653f"
+                    ],
+                    "reverseColorOrder": false,
+                    "colorDomainAuto": true
+                },
+                "options": {
+                    "standardOptions": {
+                        "util": "bytesSI"
+                    }
+                },
+                "version": "2.0.0",
+                "type": "hexbin",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 1,
+                    "i": "aed5c45c-68e1-4381-a8c9-f06a7072645d",
+                    "isResizable": true
+                },
+                "id": "483cc5e5-a9e1-4258-aa86-710570946029"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "topk(10, sort_desc(nginx_vts_server_request_time{source=~\"$server\"})) ",
+                        "legend": "source:  {{ source }}  zone: {{zone}}"
+                    }
+                ],
+                "name": "Nginx Server Request time top10",
+                "custom": {
+                    "showHeader": true,
+                    "calc": "lastNotNull",
+                    "displayMode": "seriesToRows",
+                    "sortColumn": "value",
+                    "sortOrder": "descend"
+                },
+                "options": {
+                    "valueMappings": [
+                        {
+                            "type": "range",
+                            "match": {
+                                "from": 3000,
+                                "to": null
+                            },
+                            "result": {
+                                "color": "#f80f13"
+                            }
+                        },
+                        {
+                            "type": "range",
+                            "match": {
+                                "to": 3000
+                            },
+                            "result": {
+                                "color": "#1cec12"
+                            }
+                        }
+                    ],
+                    "standardOptions": {
+                        "util": "milliseconds"
+                    }
+                },
+                "overrides": [
+                    {}
+                ],
+                "version": "2.0.0",
+                "type": "table",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 8,
+                    "i": "52d1b16d-8270-4bc3-87d2-710b48dda1f9",
+                    "isResizable": true
+                },
+                "id": "78deda9c-b90a-4816-ba1d-2e0b111bfb7c"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "topk(10, nginx_vts_upstream_request_time{source=~\"$server\"})",
+                        "legend": "source:  {{ source }}  upstream: {{ upstream }} upstream_addr:  {{ upstream_address }}"
+                    }
+                ],
+                "name": "Nginx Upsream Request time top10",
+                "custom": {
+                    "showHeader": true,
+                    "calc": "lastNotNull",
+                    "displayMode": "seriesToRows",
+                    "sortColumn": "value",
+                    "sortOrder": "descend"
+                },
+                "options": {
+                    "valueMappings": [
+                        {
+                            "type": "range",
+                            "match": {
+                                "from": 3000,
+                                "to": null
+                            },
+                            "result": {
+                                "color": "#f80f13"
+                            }
+                        },
+                        {
+                            "type": "range",
+                            "match": {
+                                "to": 3000
+                            },
+                            "result": {
+                                "color": "#1cec12"
+                            }
+                        }
+                    ],
+                    "standardOptions": {
+                        "util": "milliseconds"
+                    }
+                },
+                "overrides": [
+                    {
+                        "properties": {
+                            "standardOptions": {
+                                "util": "none"
+                            }
+                        }
+                    }
+                ],
+                "version": "2.0.0",
+                "type": "table",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 8,
+                    "i": "f2ff112b-4d07-42ca-bb60-4e7b20f23751",
+                    "isResizable": true
+                },
+                "id": "fa5e89e3-4d01-4c1f-a663-f981315a3540"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "nginx_active{server=~\"$server\"}",
+                        "legend": "server:  {{ server }}  port: {{ port }}  active"
+                    }
+                ],
+                "name": "Active connections",
+                "options": {
+                    "tooltip": {
+                        "mode": "all",
+                        "sort": "none"
+                    },
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "standardOptions": {},
+                    "thresholds": {}
+                },
+                "custom": {
+                    "drawStyle": "lines",
+                    "lineInterpolation": "smooth",
+                    "fillOpacity": 0.5,
+                    "stack": "off"
+                },
+                "version": "2.0.0",
+                "type": "timeseries",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 15,
+                    "i": "2725053f-b13d-4f6b-8a3c-c318ca2a26ef",
+                    "isResizable": true
+                },
+                "id": "2725053f-b13d-4f6b-8a3c-c318ca2a26ef"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "nginx_writing{server=~\"$server\"}",
+                        "legend": "server:  {{ server }}  port: {{ port }}  writing"
+                    },
+                    {
+                        "expr": "nginx_reading{server=~\"$server\"}",
+                        "refId": "B",
+                        "legend": " server:  {{ server }}  port: {{ port }}  reading"
+                    }
+                ],
+                "name": "R/W connections",
+                "options": {
+                    "tooltip": {
+                        "mode": "all",
+                        "sort": "none"
+                    },
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "standardOptions": {},
+                    "thresholds": {}
+                },
+                "custom": {
+                    "drawStyle": "lines",
+                    "lineInterpolation": "smooth",
+                    "fillOpacity": 0.5,
+                    "stack": "off"
+                },
+                "version": "2.0.0",
+                "type": "timeseries",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 15,
+                    "i": "86e25346-1678-435e-90ad-cdcc73ebc88e",
+                    "isResizable": true
+                },
+                "id": "b1d23b31-2ece-4a31-b572-d805065a1210"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "rate(nginx_requests{server=~\"$server\"}[1m])",
+                        "legend": "server:  {{ server }}  port: {{ port }}  requests"
+                    }
+                ],
+                "name": "1min Requests",
+                "options": {
+                    "tooltip": {
+                        "mode": "all",
+                        "sort": "none"
+                    },
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "standardOptions": {},
+                    "thresholds": {}
+                },
+                "custom": {
+                    "drawStyle": "lines",
+                    "lineInterpolation": "smooth",
+                    "fillOpacity": 0.5,
+                    "stack": "off"
+                },
+                "version": "2.0.0",
+                "type": "timeseries",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 22,
+                    "i": "e93f16fc-6567-451a-b695-2cd99823cf01",
+                    "isResizable": true
+                },
+                "id": "95cf5c3e-9433-42d3-806a-89eb6bfadaa7"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "rate(nginx_handled{server=~\"$server\"}[1m])",
+                        "legend": "server:  {{ server }}  port: {{ port }}  requests"
+                    }
+                ],
+                "name": "1min Handled requests",
+                "options": {
+                    "tooltip": {
+                        "mode": "all",
+                        "sort": "none"
+                    },
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "standardOptions": {},
+                    "thresholds": {}
+                },
+                "custom": {
+                    "drawStyle": "lines",
+                    "lineInterpolation": "smooth",
+                    "fillOpacity": 0.5,
+                    "stack": "off"
+                },
+                "version": "2.0.0",
+                "type": "timeseries",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 22,
+                    "i": "3acf604c-aeb6-4e7f-b414-28b0e340d4ff",
+                    "isResizable": true
+                },
+                "id": "648b2b80-262f-4e82-962f-0f9ceaadd5e1"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "nginx_vts_server_response_4xx_count{source=~\"$server\"}[1m]",
+                        "legend": "response: 4xx  server:  {{ source}}  port: {{ port }}  zone: {{zone}} counts"
+                    }
+                ],
+                "name": "Requests response 4xx",
+                "options": {
+                    "tooltip": {
+                        "mode": "all",
+                        "sort": "none"
+                    },
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "standardOptions": {},
+                    "thresholds": {}
+                },
+                "custom": {
+                    "drawStyle": "lines",
+                    "lineInterpolation": "smooth",
+                    "fillOpacity": 0.5,
+                    "stack": "off"
+                },
+                "version": "2.0.0",
+                "type": "timeseries",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 0,
+                    "y": 29,
+                    "i": "7a08d7f4-259d-48b4-9236-ef334dc417ea",
+                    "isResizable": true
+                },
+                "id": "fe7a0b1e-9e50-4869-8c34-6ca57ce0187d"
+            },
+            {
+                "targets": [
+                    {
+                        "refId": "A",
+                        "expr": "nginx_vts_server_response_5xx_count{source=~\"$server\"}[1m]",
+                        "legend": "response: 5xx  server:  {{ source}}  port: {{ port }}  zone: {{zone}} counts"
+                    }
+                ],
+                "name": "Requests response 5xx",
+                "options": {
+                    "tooltip": {
+                        "mode": "all",
+                        "sort": "none"
+                    },
+                    "legend": {
+                        "displayMode": "hidden"
+                    },
+                    "standardOptions": {},
+                    "thresholds": {}
+                },
+                "custom": {
+                    "drawStyle": "lines",
+                    "lineInterpolation": "smooth",
+                    "fillOpacity": 0.5,
+                    "stack": "off"
+                },
+                "version": "2.0.0",
+                "type": "timeseries",
+                "layout": {
+                    "h": 7,
+                    "w": 12,
+                    "x": 12,
+                    "y": 29,
+                    "i": "e30f5fe5-071d-48dd-8c2b-31e4c5d22779",
+                    "isResizable": true
+                },
+                "id": "b0bc2836-773b-4ae0-acdb-8d96bfbe8a39"
+            }
+        ],
+        "version": "2.0.0"
+    }
+}
